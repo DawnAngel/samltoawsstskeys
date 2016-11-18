@@ -4,7 +4,7 @@
     <title>SAML to AWS STS Keys Converter</title>
     <style>
 		div.status {
-		    width:200px;
+		    width:600px;
 		}
 	</style>
   </head>
@@ -13,7 +13,17 @@
 
     <div class="status">
     	<h3>SAML to AWS STS Keys</h3>
-    	<label>Activated:</label><input type="checkbox" id="chkboxactivated"></input>
+      <label><input type="checkbox" id="chkboxactivated"></input> Activated</label>
+      <br>
+      <h3>Last credentials:</h3>
+      <input type="button" id="btndownloadcredentials" value="Download as a file .."/>
+      <br><br>
+      <label>aws_access_key_id</label><br>
+      <textarea id="aws_access_key_id" readonly="readonly" style="width:100%" rows="1"></textarea><br>
+      <label>aws_secret_access_key</label><br>
+      <textarea id="aws_secret_access_key" readonly="readonly" style="width:100%" rows="1"></textarea><br>
+    	<label>aws_session_token</label><br>
+      <textarea id="aws_session_token" readonly="readonly" style="width:100%" rows="8"></textarea><br>
     </div>
 
     <script src="popup.js"></script>

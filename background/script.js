@@ -1,14 +1,17 @@
 // Global variables
 var FileName = 'credentials.txt';
+var defaultOptions = {
+  Activated: true,
+  AccessKeyId: '',
+  SecretAccessKey: '',
+  SessionToken: '',
+};
 
 // When this background process starts, load variables from chrome storage 
 // from saved Extension Options
 loadItemsFromStorage();
 // Additionaly on start of the background process it is checked if this extension can be activated
-chrome.storage.sync.get({
-    // The default is activated
-    Activated: true
-  }, function(item) {
+chrome.storage.sync.get(defaultOptions, function(item) {
     if (item.Activated) addOnBeforeRequestEventListener();
 });
 
@@ -97,14 +100,14 @@ function extractPrincipalPlusRoleAndAssumeRole(samlattribute, SAMLAssertion) {
 	sts.assumeRoleWithSAML(params, function(err, data) {
 		if (err) console.log(err, err.stack); // an error occurred
 		else {
-			// On succesful API response create file with the STS keys
-			let docContent = "[default] \n" +
-			"aws_access_key_id = " + data.Credentials.AccessKeyId + " \n" +
-			"aws_secret_access_key = " + data.Credentials.SecretAccessKey + " \n" +
-			"aws_session_token = " + data.Credentials.SessionToken;
-			let doc = URL.createObjectURL( new Blob([docContent], {type: 'application/octet-binary'}) );
-			// Triggers download of the generated file
-			chrome.downloads.download({ url: doc, filename: FileName, conflictAction: 'overwrite', saveAs: false });
+      // Store details in storage
+      chrome.storage.sync.get(defaultOptions, function(items) {
+        items.AccessKeyId = data.Credentials.AccessKeyId;
+        items.SecretAccessKey = data.Credentials.SecretAccessKey;
+        items.SessionToken = data.Credentials.SessionToken;
+        chrome.storage.sync.set(items);
+      });
+      
 		}        
 	});
 }
